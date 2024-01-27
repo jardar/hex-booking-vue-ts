@@ -1,0 +1,26 @@
+.footer {
+  background-color: black;
+  padding: 80px 12px;
+  &__logo {
+    max-width: 196px;
+    margin-bottom: 40px;
+  }
+  a > img {
+    width: 40px;
+    height: 40px;
+    margin-right: 1rem;
+  }
+  &__contacts {
+    margin-bottom: 80px;
+    a {
+      color: white;
+      text-decoration: none;
+      &:hover {
+        color: #ffcc00;
+      }
+    }
+    li {
+      margin-bottom: 1rem;
+    }
+  }
+}

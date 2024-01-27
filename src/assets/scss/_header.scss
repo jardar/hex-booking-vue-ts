@@ -1,0 +1,19 @@
+.header {
+  &__logo {
+    max-width: 110px;
+    @media screen and (min-width: 992px) {
+      max-width: 196px;
+    }
+  }
+  &__menu {
+    a {
+      padding: 16px;
+      text-decoration: none;
+      color: white;
+    }
+    button {
+      padding: 16px 32px;
+      color: white;
+    }
+  }
+}

@@ -1,0 +1,32 @@
+.productDetail {
+  &__banner {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  &__info {
+    padding-top: 120px;
+    padding-bottom: 120px;
+  }
+  &__section {
+    margin-bottom: 80px;
+  }
+  &__rimg {
+    display: none;
+    @media screen and (min-width: 1120px) {
+      display: block;
+      width: 44.25%;
+    }
+  }
+  &__limg {
+    width: 100%;
+    @media screen and (min-width: 1120px) {
+      width: 55.75%;
+    }
+  }
+}
+.aaImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
