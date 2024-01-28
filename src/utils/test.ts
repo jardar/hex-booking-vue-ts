@@ -1,4 +1,9 @@
-import type { ListFormat } from 'typescript'
+const arr = ['a', 'b', 'c']
+
+type ArrayType = (typeof arr)[number]
+
+const aaa: ArrayType = 'd'
+console.log(aaa)
 
 const list = [
   { name: 'a', age: 1 },

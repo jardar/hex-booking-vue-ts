@@ -11,35 +11,40 @@ import type { VueComponent } from '@/types/vueComponent'
 interface ModalProps {
   component: null | VueComponent
   props?: object
-  callback?: (payload: any) => void
 }
+type Action = (payload: any) => void
 
-const basicState = { component: null, callback: () => {} }
+const basicState = { component: null }
+const basicAction = () => {}
 
 export const useDlgStore = defineStore('dlgStore', () => {
   const modalState = ref<ModalProps>(basicState)
+  const modalCallback = ref<Action>(() => {}) // not event emitter (v-on),just a callback function store in pinia store
 
   function emitPayload(payload: any) {
     // Get the callback from our state
-    const { callback } = modalState.value
-    if (callback) callback(payload)
+    // const { callback } = modalState.value
+    if (modalCallback.value) modalCallback.value(payload)
   }
 
-  function openModal(payload: ModalProps) {
+  function openModal(payload: ModalProps, action: Action = basicAction) {
     // Get props and component from payload passed to function
-    const { props, component, callback } = payload
+    const { props, component } = payload
+
     // Get the body element
     const body = document.body
 
     // If its there, prevent scroll from happening
     if (body) body.style.overflow = 'hidden'
     // Assign them to our state
-    modalState.value = { component, props: props || {}, callback: callback }
+    modalState.value = { component, props: props || {} }
+    modalCallback.value = action
   }
 
   function closeModal() {
     // Reset our state
     modalState.value = basicState
+    modalCallback.value = basicAction
     // Get the body element
     const body = document.body
     // If its there, reset overflow style
@@ -47,23 +52,23 @@ export const useDlgStore = defineStore('dlgStore', () => {
   }
 
   // 有按鈕的訊息框 sample
-  function openInfoModal(info: string, callback: (payload: any) => void) {
-    openModal({ component: InfoModalWindow, props: { text: info }, callback: callback })
+  function openInfoModal(info: string, callback: Action) {
+    openModal({ component: InfoModalWindow, props: { text: info } }, callback)
   }
   // 進度條
   function openProgressModal(title: string) {
     openModal({ component: LoadingDlg, props: { title: title } })
   }
   // Alert 有按鈕
-  function openAlertModal(title: string, callback: (payload: any) => void) {
-    openModal({ component: AlertDlg, props: { title: title }, callback: callback })
+  function openAlertModal(title: string, callback: Action) {
+    openModal({ component: AlertDlg, props: { title: title } }, callback)
   }
 
-  function openForgetPassModal(title: string, callback: (payload: any) => void) {
-    openModal({ component: ForgetPassDlg, props: { title: title }, callback: callback })
+  function openForgetPassModal(title: string, callback: Action) {
+    openModal({ component: ForgetPassDlg, props: { title: title } }, callback)
   }
-  function openMenuWindow(callback: (payload: any) => void) {
-    openModal({ component: MenuWindow, callback: callback })
+  function openMenuWindow(callback: Action) {
+    openModal({ component: MenuWindow }, callback)
   }
   function toggleProgressModal(flag: Ref<boolean>, title: string) {
     watch(flag, (newVal) => {
