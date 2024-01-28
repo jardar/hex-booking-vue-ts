@@ -21,7 +21,7 @@ import Register2View from './Register2View.vue'
 import { useSignUpStore } from '@/stores/signUpData'
 import { storeToRefs } from 'pinia'
 import useUser from '@/composables/apiservice/useUser'
-import useModalStore from '@/stores/useModalStore'
+import { useDlgStore } from '@/stores/useDlgStore'
 
 import { useLoginDataStore } from '@/stores/loginData'
 
@@ -31,7 +31,7 @@ const { save: saveLoginData } = loginDataStore
 const router = useRouter()
 
 const { isLoading, signup } = useUser()
-const modalStore = useModalStore()
+const modalStore = useDlgStore()
 modalStore.toggleProgressModal(isLoading, '註冊中')
 
 const signUpStore = useSignUpStore()

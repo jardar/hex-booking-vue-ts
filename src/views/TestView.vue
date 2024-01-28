@@ -46,12 +46,12 @@ function handleLogin() {
 }
 
 // Import store
-import useModalStore from '../stores/useModalStore'
-import LoadingDlg from '@/components/modals/LoadingDlg.vue'
+import { useDlgStore } from '@/stores/useDlgStore'
+
 import router from '@/router'
 
 // Initialize store
-const store = useModalStore()
+const store = useDlgStore()
 
 store.openMenuWindow((payload) => {
   console.log('payload=', payload)

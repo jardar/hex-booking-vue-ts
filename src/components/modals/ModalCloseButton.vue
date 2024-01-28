@@ -9,7 +9,7 @@
 </template>
 
 <script setup lang="ts">
-import useModalStore from '../../stores/useModalStore'
+import { useDlgStore } from '../../stores/useDlgStore'
 
-const store = useModalStore()
+const store = useDlgStore()
 </script>

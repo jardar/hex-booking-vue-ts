@@ -2,7 +2,7 @@
 import { computed, ref } from 'vue'
 import useUser from '@/composables/apiservice/useUser'
 import useVerify from '@/composables/apiservice/useVerify'
-import useModalStore from '@/stores/useModalStore'
+import { useDlgStore } from '@/stores/useDlgStore'
 import { useLoginDataStore } from '@/stores/loginData'
 import { useRoute, useRouter } from 'vue-router'
 
@@ -15,7 +15,7 @@ const router = useRouter()
 
 const { isLoading, login } = useUser()
 const { isLoading: verifyLoading, verifyEmailAndSendCode } = useVerify()
-const modalStore = useModalStore()
+const modalStore = useDlgStore()
 modalStore.toggleProgressModal(isLoading, '登入中')
 modalStore.toggleProgressModal(verifyLoading, '驗證電子郵件中')
 // 記住帳號：下次自動填入

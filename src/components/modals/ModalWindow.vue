@@ -1,9 +1,9 @@
 <script setup lang="ts">
 //https://itnext.io/how-to-build-a-reusable-modal-component-in-vuejs-f1799ab9b3e
-import useModalStore from '../../stores/useModalStore'
+import { useDlgStore } from '../../stores/useDlgStore'
 import { onMounted, onUnmounted } from 'vue'
 
-const store = useModalStore()
+const store = useDlgStore()
 // Make a function that will trigger on keydown
 function keydownListener(event: KeyboardEvent) {
   // Assert the key is escape

@@ -25,12 +25,12 @@
 </template>
 
 <script setup lang="ts">
-import useModalStore from '@/stores/useModalStore'
+import { useDlgStore } from '../../stores/useDlgStore'
 defineProps<{ title: string }>()
 
-const store = useModalStore()
+const store = useDlgStore()
 function handleVerify(values: any) {
-  console.log(values)
+  // console.log(values)
   // Pass payload to callback
   store.emitPayload({ email: values.email })
   store.closeModal()

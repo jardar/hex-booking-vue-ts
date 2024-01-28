@@ -10,12 +10,12 @@
 </template>
 
 <script setup lang="ts">
-import useModalStore from '@/stores/useModalStore'
+import { useDlgStore } from '../../stores/useDlgStore'
 import ModalCloseButton from './ModalCloseButton.vue'
 
 defineProps<{ text: string }>()
 
-const store = useModalStore()
+const store = useDlgStore()
 
 function handleClick() {
   // Pass payload to callback

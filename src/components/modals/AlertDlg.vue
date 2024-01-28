@@ -7,10 +7,10 @@
 </template>
 
 <script setup lang="ts">
-import useModalStore from '@/stores/useModalStore'
+import { useDlgStore } from '../../stores/useDlgStore'
 defineProps<{ title: string }>()
 
-const store = useModalStore()
+const store = useDlgStore()
 function handleClick() {
   // Pass payload to callback
   store.emitPayload({ message: 'OK' })

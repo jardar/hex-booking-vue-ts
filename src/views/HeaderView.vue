@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import useModalStore from '@/stores/useModalStore'
+import { useDlgStore } from '@/stores/useDlgStore'
 
 import { useLoginDataStore } from '@/stores/loginData'
 import { storeToRefs } from 'pinia'
@@ -10,7 +10,7 @@ const router = useRouter()
 const loginDataStore = useLoginDataStore()
 const { loginUser } = storeToRefs(loginDataStore)
 
-const store = useModalStore()
+const store = useDlgStore()
 
 defineProps({
   bgWhite: {

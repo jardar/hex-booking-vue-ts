@@ -1,10 +1,5 @@
 <script setup lang="ts">
-import { useStorage } from '@vueuse/core'
-import type { UserStorageInfo } from '@/types/user'
-import useUser from '@/composables/apiservice/useUser'
-import useModalStore from '@/stores/useModalStore'
-import { onMounted, ref } from 'vue'
-
+import { defineEmits, ref } from 'vue'
 import { useSignUpStore } from '@/stores/signUpData'
 import { storeToRefs } from 'pinia'
 

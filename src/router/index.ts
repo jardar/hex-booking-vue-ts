@@ -4,6 +4,7 @@ import AppLayout from '../layouts/AppLayout.vue'
 import { useStorage } from '@vueuse/core'
 import type { UserStorageInfo } from '@/types/user'
 import useUser from '@/composables/apiservice/useUser'
+import NotFound from '@/components/NotFound.vue'
 
 const { checkLogin } = useUser()
 
@@ -98,6 +99,12 @@ const router = createRouter({
       // which is lazy-loaded when the route is visited.
       component: () => import('../views/TestView.vue')
       // component: () => import('../views/PokemonView.vue')
+    },
+    // last route rule
+    {
+      path: '/:pathMatch(.*)*',
+      name: 'NotFound',
+      component: NotFound
     }
   ]
 })

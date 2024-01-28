@@ -52,14 +52,14 @@
 </template>
 
 <script setup lang="ts">
-import useModalStore from '@/stores/useModalStore'
+import { useDlgStore } from '../../stores/useDlgStore'
 import { useLoginDataStore } from '@/stores/loginData'
 import { storeToRefs } from 'pinia'
 
 const loginDataStore = useLoginDataStore()
 const { loginUser } = storeToRefs(loginDataStore)
 
-const store = useModalStore()
+const store = useDlgStore()
 function handleClick(action: string) {
   // Pass payload to callback
   store.emitPayload({ action: action })

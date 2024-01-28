@@ -12,14 +12,14 @@
 <script setup lang="ts">
 import { onMounted } from 'vue'
 import useUser from '@/composables/apiservice/useUser'
-import useModalStore from '@/stores/useModalStore'
+import { useDlgStore } from '@/stores/useDlgStore'
 import { useLoginDataStore } from '@/stores/loginData'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
 
 const { isLoading, user, getUserInfo, error } = useUser()
-const modalStore = useModalStore()
+const modalStore = useDlgStore()
 modalStore.toggleProgressModal(isLoading, '資料讀取中')
 
 const loginDataStore = useLoginDataStore()
