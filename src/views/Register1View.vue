@@ -1,22 +1,20 @@
 <script setup lang="ts">
-import { defineEmits, ref } from 'vue'
-import { useSignUpStore } from '@/stores/signUpData'
+import { ref } from 'vue'
+import { useRegisterStore } from '@/stores/useRegisterStore'
 import { storeToRefs } from 'pinia'
 
 const emit = defineEmits(['next', 'goto'])
 
-const signUpStore = useSignUpStore()
-
-const { signUpInfo } = storeToRefs(signUpStore)
+const registerStore = useRegisterStore()
+const { registerData } = storeToRefs(registerStore)
 
 // 在未註冊完成前回到這頁時，除了密碼之外，回復其它已填寫資料
-const formEmail = ref(signUpInfo.value?.email || 'bear@example.com')
+const formEmail = ref(registerData.value?.email)
 
 const onSubmit = (values: any) => {
   // console.log(values)
   // save values to pinia
-  signUpInfo.value.email = values.email
-  signUpInfo.value.password = values.password
+  registerStore.registerPhaseOne(values.email, values.password)
   // switch to next page
   emit('next', 'step1')
 }
@@ -43,7 +41,7 @@ const onSubmit = (values: any) => {
         <img class="img-fluid" src="../assets/images/desktop/register.png" alt="banner" />
       </div>
       <div class="col col-lg-6 d-flex justify-content-center align-items-center">
-        <div class="">
+        <div class="px-4">
           <p class="text-primary fs-0">享樂酒店，誠摯歡迎</p>
           <h2 class="h1 text-white mb-3">立即註冊</h2>
 

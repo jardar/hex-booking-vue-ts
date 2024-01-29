@@ -1,16 +1,16 @@
 <script setup lang="ts">
 import { useDlgStore } from '@/stores/useDlgStore'
 
-import { useLoginDataStore } from '@/stores/loginData'
+import { useAuthStore } from '@/stores/useAuth'
 import { storeToRefs } from 'pinia'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
 
-const loginDataStore = useLoginDataStore()
-const { loginUser } = storeToRefs(loginDataStore)
+const authStore = useAuthStore()
+const { loginUser } = storeToRefs(authStore)
 
-const store = useDlgStore()
+const dlgStore = useDlgStore()
 
 defineProps({
   bgWhite: {
@@ -20,7 +20,7 @@ defineProps({
 })
 
 function showMenu() {
-  store.openMenuWindow((payload) => {
+  dlgStore.openMenuWindow((payload) => {
     if (payload.action === 'logout') {
       handleLogout()
       return
@@ -29,7 +29,7 @@ function showMenu() {
   })
 }
 function handleLogout() {
-  loginDataStore.clear()
+  authStore.logout()
   router.replace('/login')
 }
 </script>

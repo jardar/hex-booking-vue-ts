@@ -53,11 +53,10 @@
 
 <script setup lang="ts">
 import { useDlgStore } from '../../stores/useDlgStore'
-import { useLoginDataStore } from '@/stores/loginData'
+import { useAuthStore } from '@/stores/useAuth'
 import { storeToRefs } from 'pinia'
 
-const loginDataStore = useLoginDataStore()
-const { loginUser } = storeToRefs(loginDataStore)
+const { loginUser } = storeToRefs(useAuthStore())
 
 const store = useDlgStore()
 function handleClick(action: string) {

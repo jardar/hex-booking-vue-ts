@@ -3,12 +3,14 @@ import { computed, ref } from 'vue'
 import useUser from '@/composables/apiservice/useUser'
 import useVerify from '@/composables/apiservice/useVerify'
 import { useDlgStore } from '@/stores/useDlgStore'
-import { useLoginDataStore } from '@/stores/loginData'
+import { useAuthStore } from '@/stores/useAuth'
 import { useRoute, useRouter } from 'vue-router'
 
-const loginDataStore = useLoginDataStore()
-const { save: saveLoginData } = loginDataStore
+// const loginDataStore = useLoginDataStore()
+// const { save: saveLoginData } = loginDataStore
 // const {  } = storeToRefs(loginDataStore)
+
+const authStore = useAuthStore()
 
 const route = useRoute()
 const router = useRouter()
@@ -33,14 +35,14 @@ const onSubmit = (values: any) => {
   } else {
     localStorage.removeItem('remember')
   }
-
+  authStore.logout()
   login({
     email: values.email,
     password: values.password
   }).then((res) => {
     if (res.ok) {
       if (!Array.isArray(res.data)) {
-        saveLoginData({
+        authStore.login({
           username: res.data?.result.name || '',
           email: res.data?.result.email || '',
           token: res.data?.token || ''

@@ -1,7 +1,8 @@
-import { useStorage } from '@vueuse/core'
-import type { UserStorageInfo } from '@/types/user'
+import { useAuthStore } from '@/stores/useAuth'
+import { storeToRefs } from 'pinia'
 
-const userStorage = useStorage('user', {} as UserStorageInfo)
+const authStore = useAuthStore()
+const { loginToken } = storeToRefs(authStore)
 
 export async function postData(url = '', data = {}, auth = false) {
   return fetchData('POST', url, data, auth)
@@ -26,8 +27,12 @@ export async function fetchData(
     // body: JSON.stringify(data)
   }
   reqOption.method = method //'POST'
+
   if (auth) {
-    const token = userStorage.value.token || ''
+    const token = loginToken.value
+    if (!token) {
+      return Promise.reject(new Error('no token'))
+    }
     reqOption.headers = {
       ...reqOption.headers,
       // Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -47,7 +52,8 @@ export async function fetchData(
 }
 
 /**
- * check if response status code is between 200-299 inclusive.
+ * check if response status code is between 200-299 inclusive.<br>
+ * and make sure response content is json
  * @param res
  */
 async function status(res: Response) {

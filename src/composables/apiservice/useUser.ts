@@ -1,118 +1,102 @@
 import { ref, computed } from 'vue'
 import type { Ref } from 'vue'
-import type { SignUpReq, SignUpRes, LoginReq, LoginRes, CheckRes } from '../../types/user'
 
-import { postData, getData } from '../../utils/fetchUtil'
+import { ROOM_BOOKING_API, emptyAPIError, newErrorReply, newMaySuccessReply } from '.'
+import type {
+  APIError,
+  UserRes,
+  SignUpReq,
+  SignUpRes,
+  LoginReq,
+  LoginRes,
+  CheckRes
+} from '@/types/api'
 
-interface APIError {
-  lastErr: Error | null
-}
-interface Reply<T> {
-  ok: boolean
-  msg: string
-  data: T | null
-}
+import { postData, getData } from '@/utils/fetchUtil'
 
-const BaseURL = 'https://freyia.onrender.com/api/v1/user'
+const BaseURL = `${ROOM_BOOKING_API}/user`
 
+/**
+ * 呼叫使用者相關 API 的 composable
+ */
 export default function useUser() {
-  const user = ref<LoginRes | null>(null)
+  const user = ref<UserRes | null>(null)
   const isLoading = ref(false)
-  const error: Ref<APIError> = ref({ lastErr: null })
+  const error: Ref<APIError> = ref(emptyAPIError)
 
+  /**
+   * 註冊
+   * @param payload SignUpReq
+   */
   const signup = async (payload: SignUpReq) => {
     isLoading.value = true
-
+    error.value = emptyAPIError
     try {
-      user.value = await postData(`${BaseURL}/signup`, payload)
-      error.value.lastErr = null
-      return {
-        ok: true,
-        msg: 'success',
-        data: user.value
-      } as Reply<SignUpRes>
+      const reply = await postData(`${BaseURL}/signup`, payload)
+
+      return newMaySuccessReply<SignUpRes>(reply)
     } catch (err: any) {
       // console.log('login=', err.message)
-      error.value.lastErr = err as Error
-      return {
-        ok: false,
-        msg: err.message,
-        data: null
-      } as Reply<SignUpRes>
+      error.value = err
+
+      return newErrorReply<SignUpRes>(err)
     } finally {
       isLoading.value = false
     }
   }
+  /**
+   * 登入
+   * @param payload LoginReq
+   */
   const login = async (payload: LoginReq) => {
     isLoading.value = true
-    error.value.lastErr = null
+    error.value = emptyAPIError
     try {
-      user.value = await postData(`${BaseURL}/login`, payload)
-      // TODO: check status
+      const reply = await postData(`${BaseURL}/login`, payload)
 
-      return {
-        ok: true,
-        msg: 'success',
-        data: user.value
-      } as Reply<LoginRes>
+      return newMaySuccessReply<LoginRes>(reply)
     } catch (err: any) {
       // console.log('login=', err.message)
-      error.value.lastErr = err as Error
-      return {
-        ok: false,
-        msg: err.message,
-        data: null
-      } as Reply<LoginRes>
+      error.value = err
+      return newErrorReply<LoginRes>(err)
     } finally {
       isLoading.value = false
     }
   }
-
+  /**
+   * 從後端檢查是否登入
+   */
   const checkLogin = async () => {
     isLoading.value = true
-
+    error.value = emptyAPIError
     try {
-      user.value = await getData(`${BaseURL}/check`, true)
-      error.value.lastErr = null
-      return {
-        ok: user.value?.status || false,
-        msg: 'success',
-        data: user.value
-      } as Reply<CheckRes>
+      const reply = await getData(`${BaseURL}/check`, true)
+
+      return newMaySuccessReply<CheckRes>(reply)
     } catch (err: any) {
       // console.log('login=', err.message)
-      error.value.lastErr = err as Error
-      return {
-        ok: false,
-        msg: err.message,
-        data: null
-      } as Reply<CheckRes>
+      error.value = err
+      return newErrorReply<CheckRes>(err)
     } finally {
       isLoading.value = false
     }
   }
 
+  /**
+   * 取得使用者資訊
+   */
   const getUserInfo = async () => {
     isLoading.value = true
-    error.value.lastErr = null
+    error.value = emptyAPIError
+    user.value = null
     try {
-      user.value = await getData(`${BaseURL}/`, true)
-      if (user.value?.status) {
-        return {
-          ok: true,
-          msg: 'success',
-          data: user.value
-        } as Reply<LoginRes>
-      } else {
-        throw new Error('user not login')
-      }
+      const reply = await getData(`${BaseURL}/`, true)
+      user.value = reply
+      return newMaySuccessReply<UserRes>(reply)
     } catch (err: any) {
-      error.value.lastErr = err as Error
-      return {
-        ok: false,
-        msg: err.message,
-        data: null
-      } as Reply<CheckRes>
+      error.value = err
+      user.value = null
+      return newErrorReply<UserRes>(err)
     } finally {
       isLoading.value = false
     }

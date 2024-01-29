@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useSignUpStore } from '@/stores/signUpData'
+import { useRegisterStore } from '@/stores/useRegisterStore'
 import { storeToRefs } from 'pinia'
 import { ref } from 'vue'
 import { parseBirth } from '@/utils/dateUtil'
@@ -7,19 +7,19 @@ import cityCountyData from '../assets/cityCountyData.json'
 
 const emit = defineEmits(['next', 'goto'])
 
-const signUpStore = useSignUpStore()
-const { signUpInfo } = storeToRefs(signUpStore)
+const registerStore = useRegisterStore()
+const { registerData } = storeToRefs(registerStore)
 
 // 在未註冊完成前回到這頁時，除了密碼之外，回復其它已填寫資料
-const formName = ref(signUpInfo.value?.name || '')
-const formPhone = ref(signUpInfo.value?.phone || '')
-const { year, month, day } = parseBirth(signUpInfo.value?.birthday || '1921/1/1')
+const formName = ref(registerData.value?.name || '')
+const formPhone = ref(registerData.value?.phone || '')
+const { year, month, day } = parseBirth(registerData.value?.birthday || '1921/1/1')
 const formBirthYear = ref(year)
 const formBirthMonth = ref(month)
 const formBirthDay = ref(day)
-const formCity = ref(signUpInfo.value?.address?.city || '')
-const formCounty = ref(signUpInfo.value?.address?.county || '')
-const formAddress = ref(signUpInfo.value?.address?.detail || '')
+const formCity = ref(registerData.value?.address?.city || '')
+const formCounty = ref(registerData.value?.address?.county || '')
+const formAddress = ref(registerData.value?.address?.detail || '')
 const formAgree = ref(false)
 // load city and county options
 const cityOptions = ref<string[]>([])
@@ -37,14 +37,17 @@ function handleCitySelect(e: any) {
 const onSubmit = (values: any) => {
   // console.log(values)
   // save values to pinia
-  signUpInfo.value.name = values.username
-  signUpInfo.value.phone = values.phone
-  signUpInfo.value.birthday = `${values.birthYear}/${values.birthMonth}/${values.birthDay}`
-
-  signUpInfo.value.address.city = values.city
-  signUpInfo.value.address.county = values.county
-  signUpInfo.value.address.detail = values.address
-  signUpInfo.value.address.zipcode = 100
+  registerStore.registerPhaseTwo(
+    values.username,
+    values.phone,
+    `${values.birthYear}/${values.birthMonth}/${values.birthDay}`,
+    {
+      city: values.city,
+      county: values.county,
+      detail: values.address,
+      zipcode: 100
+    }
+  )
 
   // switch to next page
   emit('next', 'step2')
@@ -83,13 +86,13 @@ function pairCityAndCounty(wantCity: string) {
       <div class="col col-lg-6 d-none d-lg-block">
         <img class="img-fluid" src="../assets/images/desktop/register.png" alt="banner" />
       </div>
-      <div class="col col-lg-6 d-flex justify-content-center align-items-center">
-        <div class="">
+      <div class="col col-lg-6 d-flex flex-column justify-content-center align-items-center">
+        <div class="px-4">
           <p class="text-primary fs-0">享樂酒店，誠摯歡迎</p>
           <h2 class="h1 text-white mb-3">立即註冊</h2>
 
           <!-- process bar -->
-          <div class="register__process d-flex justify-content-between align-items-center mb-5">
+          <div class="d-flex justify-content-between align-items-center mb-5">
             <div class="text-center">
               <button
                 @click="emit('goto', 'step1')"
@@ -106,7 +109,7 @@ function pairCityAndCounty(wantCity: string) {
                 class="progress-bar"
                 role="progressbar"
                 aria-label="Progress"
-                style="width: 188px"
+                style="width: 150px"
                 aria-valuenow="100"
                 aria-valuemin="0"
                 aria-valuemax="100"
@@ -125,12 +128,7 @@ function pairCityAndCounty(wantCity: string) {
             </div>
           </div>
 
-          <VForm
-            novalidate
-            v-slot="{ errors }"
-            class="register__form text-white fs-0"
-            @submit="onSubmit"
-          >
+          <VForm novalidate v-slot="{ errors }" class="text-white fs-0 mb-5" @submit="onSubmit">
             <div class="mb-3">
               <label for="username" class="form-label">姓名 必填</label>
               <VField
@@ -163,7 +161,7 @@ function pairCityAndCounty(wantCity: string) {
             </div>
             <div class="mb-3">
               <label for="birthYear" class="form-label">生日 必填</label>
-              <div class="register__form__birth d-flex gx-2 justify-content-between">
+              <div class="d-flex gap-1 justify-content-between">
                 <VField
                   v-model="formBirthYear"
                   id="birthYear"
@@ -209,7 +207,7 @@ function pairCityAndCounty(wantCity: string) {
             </div>
             <div class="mb-3">
               <label for="city" class="form-label">地址 必填</label>
-              <div class="register__form__address d-flex gx-2 justify-content-between mb-3">
+              <div class="d-flex gap-1 justify-content-between mb-3">
                 <VField
                   v-model="formCity"
                   @change="handleCitySelect"
@@ -279,3 +277,4 @@ function pairCityAndCounty(wantCity: string) {
     </div>
   </main>
 </template>
+<style scoped lang="scss"></style>

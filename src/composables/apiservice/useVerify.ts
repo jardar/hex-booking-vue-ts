@@ -1,58 +1,35 @@
 import { ref, computed } from 'vue'
 import type { Ref } from 'vue'
-import type { SignUpReq, SignUpRes, LoginReq, LoginRes, CheckRes } from '../../types/user'
+import { ROOM_BOOKING_API, emptyAPIError, newErrorReply, newMaySuccessReply } from '.'
+import type { APIError, EmailRes } from '@/types/api'
 
-import { postData, getData } from '../../utils/fetchUtil'
+import { postData } from '@/utils/fetchUtil'
 
-interface APIError {
-  lastErr: Error | null
-}
-interface Reply<T> {
-  ok: boolean
-  msg: string
-  data: T | null
-}
-
-interface EmailRes {
-  status: boolean
-  // result: {
-  //   isEmailExists: boolean
-  // }
-  message?: string
-}
-
-const BaseURL = 'https://freyia.onrender.com/api/v1/verify'
+const BaseURL = `${ROOM_BOOKING_API}/verify`
 
 export default function useVerify() {
   const isLoading = ref(false)
-  const error: Ref<APIError> = ref({ lastErr: null })
+  const error: Ref<APIError> = ref(emptyAPIError)
 
-  const verifyEmailAndSendCode = async (payload: string) => {
+  /**
+   * 檢查 email 是否存在？若存在則發送驗證碼
+   * @param payload email
+   */
+  const verifyEmailAndSendCode = async (email: string) => {
     isLoading.value = true
-    error.value.lastErr = null
+    error.value = emptyAPIError
     try {
-      const reply = await postData(`${BaseURL}/email`, { email: payload })
+      const reply = await postData(`${BaseURL}/email`, { email: email })
+
       if (reply.status && reply.result.isEmailExists) {
-        const reply2 = await postData(`${BaseURL}/generateEmailCode`, { email: payload })
-        if (reply2.status) {
-          return {
-            ok: true,
-            msg: 'success',
-            data: reply2
-          } as Reply<EmailRes>
-        } else {
-          throw new Error('fail to send reset code')
-        }
+        const reply2 = await postData(`${BaseURL}/generateEmailCode`, { email: email })
+        return newMaySuccessReply<EmailRes>(reply2)
       } else {
         throw new Error('email not exists')
       }
     } catch (err: any) {
-      error.value.lastErr = err as Error
-      return {
-        ok: false,
-        msg: err.message,
-        data: null
-      } as Reply<EmailRes>
+      error.value = err
+      return newErrorReply<EmailRes>(err)
     } finally {
       // console.log('verify email finally')
       isLoading.value = false

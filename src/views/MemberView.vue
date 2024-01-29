@@ -10,11 +10,12 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted } from 'vue'
+import { onMounted, ref } from 'vue'
 import useUser from '@/composables/apiservice/useUser'
 import { useDlgStore } from '@/stores/useDlgStore'
-import { useLoginDataStore } from '@/stores/loginData'
+import { useAuthStore } from '@/stores/useAuth'
 import { useRouter } from 'vue-router'
+import type { UserRes } from '@/types/api'
 
 const router = useRouter()
 
@@ -22,10 +23,10 @@ const { isLoading, user, getUserInfo, error } = useUser()
 const modalStore = useDlgStore()
 modalStore.toggleProgressModal(isLoading, '資料讀取中')
 
-const loginDataStore = useLoginDataStore()
+const authStore = useAuthStore()
 
 function handleLogout() {
-  loginDataStore.clear()
+  authStore.logout()
   router.replace('/login')
 }
 

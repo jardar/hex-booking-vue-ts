@@ -18,25 +18,22 @@ import HeaderView from './HeaderView.vue'
 import Register1View from './Register1View.vue'
 import Register2View from './Register2View.vue'
 
-import { useSignUpStore } from '@/stores/signUpData'
-import { storeToRefs } from 'pinia'
 import useUser from '@/composables/apiservice/useUser'
 import { useDlgStore } from '@/stores/useDlgStore'
+import { useAuthStore } from '@/stores/useAuth'
+import { useRegisterStore } from '@/stores/useRegisterStore'
+import { storeToRefs } from 'pinia'
+const registerStore = useRegisterStore()
+const { registerData } = storeToRefs(registerStore)
 
-import { useLoginDataStore } from '@/stores/loginData'
-
-const loginDataStore = useLoginDataStore()
-const { save: saveLoginData } = loginDataStore
+const authStore = useAuthStore()
 
 const router = useRouter()
 
 const { isLoading, signup } = useUser()
+
 const modalStore = useDlgStore()
 modalStore.toggleProgressModal(isLoading, '註冊中')
-
-const signUpStore = useSignUpStore()
-const { empty } = signUpStore
-const { signUpInfo } = storeToRefs(signUpStore)
 
 const currentView = ref<VueComponent>(Register1View)
 
@@ -49,19 +46,19 @@ function handleNext(payload: string) {
     // console.log(signUpInfo.value)
     // do sign up via api
     signup({
-      name: signUpInfo.value.name,
-      email: signUpInfo.value.email,
-      password: signUpInfo.value.password,
-      phone: signUpInfo.value.phone,
-      birthday: signUpInfo.value.birthday,
-      address: signUpInfo.value.address
+      name: registerData.value.name,
+      email: registerData.value.email,
+      password: registerData.value.password,
+      phone: registerData.value.phone,
+      birthday: registerData.value.birthday,
+      address: registerData.value.address
     }).then((res) => {
       if (res.ok) {
         // console.log('res=', res.data)
         // clear sign up data
-        empty()
+        registerStore.clear()
         // store token,email to local storage
-        saveLoginData({
+        authStore.login({
           username: res.data?.result.name || '',
           email: res.data?.result.email || '',
           token: res.data?.token || ''
@@ -82,7 +79,7 @@ function handleNext(payload: string) {
  */
 function handleGoto(payload: string) {
   if (payload === 'step1') {
-    // currentView.value = Register1View
+    currentView.value = Register1View
     return
   }
   if (payload === 'step2') {
